@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Entity
 public class MailReference {
@@ -14,12 +15,21 @@ public class MailReference {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private ArrayList<String> errors;
-    private String status;
+    private String errors;
+
+    public enum Status {
+        INITIALIZED,
+        PARSED,
+        SENDING,
+        SENT,
+        ERROR_PARSING,
+        ERROR_SENDING
+    }
+    private Status status;
 
     protected MailReference(){}
 
-    public MailReference(String status){
+    public MailReference(Status status){
         this.status = status;
     }
 
@@ -27,19 +37,21 @@ public class MailReference {
         return id;
     }
 
-    public ArrayList<String> getErrors() {
+    public String getErrors() {
         return errors;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setErrors(ArrayList<ErrorMessage> errors) {
+        this.errors =
+            errors.stream().map(e -> e.toString())
+                .collect(Collectors.joining(","));
     }
 }

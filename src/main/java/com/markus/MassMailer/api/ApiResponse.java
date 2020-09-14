@@ -14,6 +14,9 @@ public class ApiResponse {
         this.mailReferenceId = mailReference.getId();
     }
 
+    public ApiResponse() {
+    }
+
     public HttpStatus getStatus() {
         return status;
     }

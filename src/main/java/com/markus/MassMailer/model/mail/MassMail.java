@@ -17,15 +17,11 @@ import javax.persistence.GenerationType;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MassMail implements Runnable{
-    private ArrayList<String> recipients;
-    private ArrayList<String> cc;
-    private ArrayList<String> bcc;
-    private String subject;
-    private String body;
-    private ArrayList<String> filenames = new ArrayList<>();
-    private ArrayList<User> users= new ArrayList<>();
+    private ArrayList<String> filenames;
+    private ArrayList<User> users;
     private ArrayList<ErrorMessage> errors;
     private Template bodyTemplate;
     private Template subjectTemplate;
@@ -44,30 +40,30 @@ public class MassMail implements Runnable{
         filenames = new ArrayList<>();
     }
 
-    public boolean send() throws IOException, ClassNotFoundException, MessagingException {
-        mailReference.setStatus("sending in progress");
+    public boolean send(){
+        mailReference.setStatus(MailReference.Status.SENDING);
         mailReferenceRepository.save(mailReference);
         int i = 1;
         for (String filename:filenames) {
-            FileReaderService reader = new FileReaderService(filename);
-            ArrayList<Mail> mails =  reader.read();
-            for (Mail mail:mails) {
-                System.out.println("\n\nMail " + i);
-                i++;
-                mail.send();
+            try{
+                FileReaderService reader = new FileReaderService(filename);
+                ArrayList<Mail> mails =  reader.read();
+                for (Mail mail:mails) {
+                    System.out.println("\n\nMail " + i);
+                    i++;
+                    mail.send();
+                }
+            } catch (IOException | ClassNotFoundException | MessagingException e) {
+                errors.add(new ErrorMessage(e.getMessage()));
             }
         }
-        mailReference.setStatus("sent");
+        mailReference.setStatus(MailReference.Status.SENT);
         mailReferenceRepository.save(mailReference);
         return true;
     }
 
     public boolean hasErrors(){
         return !errors.isEmpty();
-    }
-
-    public ArrayList getErrors(){
-        return errors;
     }
 
     public void parse(){
@@ -79,8 +75,7 @@ public class MassMail implements Runnable{
                 filenames.add(writer.getFilename());
                 for (int i = 0; i < users.size(); i++) {
                     try {
-                        Mail mail = new Mail(staticMailData);
-                        mail.setUser(users.get(i));
+                        Mail mail = new Mail(staticMailData, users.get(i));
                         mail.parse(bodyTemplate, subjectTemplate);
                         writer.addMail(mail);
                     } catch (MailCantGetParsedException e) {
@@ -90,15 +85,29 @@ public class MassMail implements Runnable{
                 writer.write();
                 writer.close();
             }catch (IOException e){
-
+                errors.add(new ErrorMessage(e.getMessage()));
             }
         }
-        setErrorToReference("parsed");
+        setToReference(MailReference.Status.PARSED);
     }
 
-    private void setErrorToReference(String status){
+    private void setToReference(MailReference.Status status){
         if(hasErrors()){
-            mailReference.setStatus("Error");
+            switch (status)
+            {
+                case PARSED:
+                    mailReference.setErrors(this.errors);
+                    mailReference.setStatus(MailReference.Status.ERROR_PARSING);
+                    mailReferenceRepository.save(mailReference);
+                    break;
+                case SENT:
+                    mailReference.setErrors(this.errors);
+                    mailReference.setStatus(MailReference.Status.ERROR_SENDING);
+                    mailReferenceRepository.save(mailReference);
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + status);
+            }
         }else {
             mailReference.setStatus(status);
             mailReferenceRepository.save(mailReference);
@@ -109,48 +118,17 @@ public class MassMail implements Runnable{
         return filenames;
     }
 
-    public void setBodyTemplate(Template bodyTemplate) {
-        this.bodyTemplate = bodyTemplate;
-    }
-
-    public void setSubjectTemplate(Template subjectTemplate) {
-        this.subjectTemplate = subjectTemplate;
-    }
-
-    public void setUsers(ArrayList<User> users) {
-        this.users = users;
-    }
-
     @Override
     public void run() {
-        try {
-            this.parse();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.parse();
         if(this.hasErrors()){
             new FileCleanUpService(this.getFilenames()).clean();
-            //return new ApiError(HttpStatus.BAD_REQUEST, "Error during Mail Creation", this.getErrors());
         }else{
-            try {
-                this.send();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
+            this.send();
         }
     }
 
     public void setReferenceRepostory(MailReferenceRepository mailReferenceRepository) {
         this.mailReferenceRepository = mailReferenceRepository;
     }
-//    public boolean setRecipients(){
-//        recipients = (ArrayList<String>) userData.get("to");
-//        cc = (ArrayList<String>) userData.get("cc");
-//        bcc = (ArrayList<String>) userData.get("bcc");
-//        return true;
-//    }
 }

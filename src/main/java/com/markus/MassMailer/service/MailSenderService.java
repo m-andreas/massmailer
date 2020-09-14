@@ -1,19 +1,15 @@
 package com.markus.MassMailer.service;
 
 import com.markus.MassMailer.model.mail.Mail;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
 import java.util.Properties;
 
 public class MailSenderService {
-    public void send(Mail mail) throws IOException, MessagingException {
+    public void send(Mail mail) throws MessagingException {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 
         javaMailSender.setHost("host20.ssl-gesichert.at");
@@ -38,6 +34,5 @@ public class MailSenderService {
         helper.setText(mail.getParsedBody(), true);
 
         javaMailSender.send(message);
-
     }
 }

@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class CreateMailerService {
@@ -21,7 +20,7 @@ public class CreateMailerService {
         this.mailReference = mailReference;
     }
 
-    public MassMail createMailer() throws JSONException, IOException {
+    public MassMail createMailer() throws JSONException {
         JSONObject obj;
         JSONArray usersJSON;
         Template bodyTemplate, subjectTemplate;

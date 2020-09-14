@@ -2,7 +2,6 @@ package com.markus.MassMailer.model.mail;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 

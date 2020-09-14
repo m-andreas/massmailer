@@ -14,11 +14,8 @@ public class Mail implements Serializable{
     private String parsedBody;
     private String parsedSubject;
 
-    public Mail(MailData staticMailData) {
+    public Mail(MailData staticMailData, User user) {
         this.mailData = staticMailData;
-    }
-
-    public void setUser(User user) {
         this.user = user;
     }
 
@@ -39,7 +36,8 @@ public class Mail implements Serializable{
             e.printStackTrace();
         }
         System.out.println(this);
-        //new MailSenderService().send(this);
+        // Uncomment to start sending!
+        // new MailSenderService().send(this);
         return true;
     }
 
@@ -47,7 +45,7 @@ public class Mail implements Serializable{
     public String toString() {
         return "\nrecipients=" + user.getMailAddress() +
             "\ncc=" + mailData.getCc() +
-            "\nbcc=" + mailData.getBcc +
+            "\nbcc=" + mailData.getBcc() +
             "\nsubject='" + parsedSubject + '\'' +
             "\nbody='" + parsedBody + '\'';
     }

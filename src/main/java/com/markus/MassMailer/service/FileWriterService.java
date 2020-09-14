@@ -1,16 +1,13 @@
 package com.markus.MassMailer.service;
 
 import com.markus.MassMailer.model.mail.Mail;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class FileWriterService {
-    private String filepath;
     private FileOutputStream fileOut;
     private ObjectOutputStream objectOut;
     private ArrayList<Mail> mailBatch;

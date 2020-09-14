@@ -13,6 +13,10 @@ public class ErrorMessage {
         this.index = index;
     }
 
+    public ErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
     @Override
     public String toString() {
         return "Error processing Mail for User " + user.getFullName() +
