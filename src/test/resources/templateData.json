@@ -1,0 +1,4 @@
+{
+  "body": "<#if gender == \"M\">Lieber<#elseif gender == \"W\">Liebe<#else>Liebe/r</#if> ${firstname}<br>Wie geht es dir?<br>Liebe Grüße<br>${sender}",
+  "subject": "Hallo ${firstname} ${lastname}"
+}

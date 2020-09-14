@@ -1,0 +1,9 @@
+{
+  "to": ["Manuela.Bauer@web.wien"],
+  "cc": [""],
+  "bcc": [""],
+  "firstname": "Manuela",
+  "lastname": "Bauer",
+  "gender": "W",
+  "sender": "Max Mustermann"
+}
