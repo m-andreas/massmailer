@@ -2,6 +2,7 @@ package com.markus.MassMailer.model.mail;
 
 import com.markus.MassMailer.model.user.User;
 import com.markus.MassMailer.service.MailSenderService;
+import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.error.RootAttributeNotFoundException;
 
 import javax.mail.MessagingException;
@@ -23,21 +24,21 @@ public class Mail implements Serializable{
         try {
             parsedBody = bodyTemplate.parse(user);
             parsedSubject = subjectTemplate.parse(user);
-        } catch (RootAttributeNotFoundException | IOException e) {
+        } catch (IOException | PebbleException e) {
             throw new MailCantGetParsedException(e);
         }
         return this;
     }
 
     public boolean send() throws IOException, MessagingException {
+        // Uncomment to start sending!
+        // new MailSenderService().send(this);
         try {
-            Thread.sleep(1000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         System.out.println(this);
-        // Uncomment to start sending!
-        // new MailSenderService().send(this);
         return true;
     }
 

@@ -20,16 +20,22 @@ public class MassMailController {
     @CrossOrigin()
     @PostMapping("send")
     public ApiResponse sendMail(@NotNull @RequestBody String pBody){
+        MassMail mailer;
+
         MailReference mailReference = new MailReference(MailReference.Status.INITIALIZED);
         mailReferenceRepository.save(mailReference);
-        MassMail mailer = null;
+
         try {
             mailer = new CreateMailerService(pBody, mailReference).createMailer();
+            mailer.setReferenceRepostory(mailReferenceRepository);
         } catch (JSONException e) {
            mailReferenceRepository.delete(mailReference);
-           return new ApiError(HttpStatus.BAD_REQUEST, "Error reading JSON", e.getMessage());
+           return new ApiError(
+                   HttpStatus.BAD_REQUEST,
+                   "Error reading JSON",
+                   e.getMessage());
         }
-        mailer.setReferenceRepostory(mailReferenceRepository);
+
         Thread thread = new Thread(mailer);
         thread.start();
         return new ApiResponse(mailReference);

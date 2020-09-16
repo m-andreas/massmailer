@@ -49,7 +49,6 @@ public class MassMail implements Runnable{
                 FileReaderService reader = new FileReaderService(filename);
                 ArrayList<Mail> mails =  reader.read();
                 for (Mail mail:mails) {
-                    System.out.println("\n\nMail " + i);
                     i++;
                     mail.send();
                 }

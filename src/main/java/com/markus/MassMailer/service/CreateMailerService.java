@@ -1,6 +1,5 @@
 package com.markus.MassMailer.service;
 
-import com.markus.MassMailer.api.JsonSerializer;
 import com.markus.MassMailer.model.mail.MailReference;
 import com.markus.MassMailer.model.mail.MassMail;
 import com.markus.MassMailer.model.mail.Template;
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 public class CreateMailerService {
     String body;
     MailReference mailReference;
+
     public CreateMailerService(String body, MailReference mailReference){
         this.body = body;
         this.mailReference = mailReference;
@@ -30,10 +30,10 @@ public class CreateMailerService {
         obj = new JSONObject(body);
         bodyTemplate = new Template(obj.getString("body"));
         subjectTemplate = new Template(obj.getString("subject"));
-        users = new ArrayList<>();
+        users = new ArrayList<User>();
         usersJSON = obj.getJSONArray("users");
         for (int i = 0; i < usersJSON.length(); i++) {
-            users.add( new User(JsonSerializer.toMap(usersJSON.getJSONObject(i))));
+            users.add( new User(JsonSerializerService.toMap(usersJSON.getJSONObject(i))));
         }
         mailData = new MailData(obj.getJSONObject("static_data"));
         return new MassMail(bodyTemplate, subjectTemplate, users, mailData, this.mailReference);

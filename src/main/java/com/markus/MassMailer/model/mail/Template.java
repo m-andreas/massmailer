@@ -10,10 +10,14 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 public class Template {
-    private PebbleEngine engine = new PebbleEngine.Builder().strictVariables(true).loader(new StringLoader()).build();
+    private PebbleEngine engine;
     private PebbleTemplate template;
 
     public Template(String templateText) {
+        engine = new PebbleEngine
+                    .Builder()
+                    .strictVariables(true)
+                    .loader(new StringLoader()).build();
         this.template = engine.getTemplate(templateText);
     }
 

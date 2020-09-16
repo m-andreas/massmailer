@@ -1,11 +1,8 @@
 package com.markus.MassMailer.model.mail;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
+import javax.persistence.*;
 
 
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -15,6 +12,8 @@ public class MailReference {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(columnDefinition="CLOB")
     private String errors;
 
     public enum Status {
@@ -50,8 +49,9 @@ public class MailReference {
     }
 
     public void setErrors(ArrayList<ErrorMessage> errors) {
-        this.errors =
-            errors.stream().map(e -> e.toString())
-                .collect(Collectors.joining(","));
+        this.errors = errors
+                        .stream()
+                        .map(e -> e.toString())
+                        .collect(Collectors.joining(","));
     }
 }

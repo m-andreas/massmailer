@@ -1,0 +1,29 @@
+{
+  "subject": "Hello {{ firstname | abbreviate(10)}}",
+  "body": "Dear {% if gender == 'male' %}Mr{%else%}Mrs{%endif%} {{ lastname }}, <br> regards the boss",
+  "static_data": {
+    "from" : "markus.andreas@web.wien",
+    "cc" : "",
+    "bcc" : ""
+  },
+  "users": [
+    {
+      "firstname": "Markus Sepp Hans Karl",
+      "lastname": "Andreas",
+      "email": "marandreas1987@gmail.com",
+      "gender": "male"
+    },
+    {
+      "firstname": "Günther",
+      "lastname": "Jester",
+      "email": "marandreas1987@gmail.com",
+      "gender": "male"
+    },
+    {
+      "firstname": "Maria",
+      "lastname": "Müller",
+      "email": "marandreas1987@gmail.com",
+      "gender": "female"
+    }
+  ]
+}
